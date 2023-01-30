@@ -1,4 +1,4 @@
-package FirstLecture;
+package Lab00;
 
 import java.util.*;
 

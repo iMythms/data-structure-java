@@ -1,4 +1,4 @@
-package FirstLecture;
+package Lab00;
 
 public class EmployeeTest {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package FirstLecture;
+package Lab00;
 
 public class Universe {
     public static void main(String[] args) {

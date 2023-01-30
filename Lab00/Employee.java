@@ -1,4 +1,4 @@
-package FirstLecture;
+package Lab00;
 
 public class Employee {
     private int ID;
