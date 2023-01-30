@@ -10,8 +10,6 @@ public class Exercise0 {
 
         double sum = 0;
 
-        System.out.println("Enter array size: ");
-
         for (int i = 0; i < arr.length; i++) {
             sum += arr[i];
         }
