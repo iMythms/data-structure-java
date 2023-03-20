@@ -16,10 +16,10 @@ public class ArrayListEx1 {
         System.out.println("Index of Ahmed: " + list.indexOf("Ahmed"));
         System.out.println();
 
-        // Create arrayList to store the following values: 20, 30, 50, 60
-        ArrayList<Integer> list2 = new ArrayList<Integer>();
-        list2.add(20);
-        list2.add(30);
+        // // Create arrayList to store the following values: 20, 30, 50, 60
+        // ArrayList<Integer> list2 = new ArrayList<Integer>();
+        // list2.add(20);
+        // list2.add(30);
 
         // int a = list2.get(0);
 

@@ -11,7 +11,7 @@ public class ArrayListEx2 {
         list.add("Ali");
         System.out.println(list.toString());
 
-        list.set(0, "Fahad");
+        list.set(1, "Fahad");
         System.out.println(list.toString());
     }
 }
