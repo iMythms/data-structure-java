@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Structures (Java) — Teaching Slides</title>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.5.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.5.0/dist/theme/solarized.css" id="theme">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+  <style>
+    /* Small adjustments for code blocks */
+    pre code { font-size: 14px; }
+    .small { font-size: 0.9em; opacity: 0.95 }
+    .code-pane { max-height: 55vh; overflow: auto; }
+    /* signature fixed on every slide (bottom-right) */
+    .signature {
+      position: fixed;
+      right: 18px;
+      bottom: 12px;
+      font-size: 0.85em;
+      opacity: 0.9;
+      background: rgba(255,255,255,0.02);
+      padding: 6px 10px;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <p class="small">by @iMythms — Mytham Jasim</p>
+
+        <h1>Data Structures in Java</h1>
+        <aside class="notes">Slides authored by @iMythms — contact: hello@mytham.me</aside>
+      </section>
+
+      <section>
+
+        <h2>Agenda</h2>
+        <ul>
+          <li>Linked List — concept, code, walk-through</li>
+          <li>Queue (custom + usage) — concept, code, debugging</li>
+          <li>Binary Search Tree — concept, code, recursion</li>
+          <li>Utility example: RandomSumPairs</li>
+          <li>Common Java style notes from the repo</li>
+        </ul>
+      </section>
+
+      <section>
+
+        <h2>Linked List — Concept</h2>
+        <p>A singly-linked list stores nodes; each node points to the next node. Supports O(1) insert at head, O(n) insert at tail (unless you keep tail ref).</p>
+      </section>
+
+      <section>
+
+        <h2>Linked List — Code (simplified)</h2>
+        <div class="code-pane">
+<pre><code class="language-java">// from RevisionLabTest/LinkedList.java (annotated)
+public class LinkedList {
+    // head points to the first node in the list; null means empty
+    public Node head;
+
+    public LinkedList() {
+        this.head = null; // initial empty list
+    }
+
+    // add item to front (O(1))
+    public void addToHead(String data) {
+        // create new node and make it the head, linking old head as next
+        Node newHead = new Node(data);
+        Node currentHead = this.head;
+        this.head = newHead; // new node becomes head
+        if (currentHead != null) {
+            this.head.setNextNode(currentHead); // link to previous head
+        }
+    }
+
+    // add item to end (O(n) here because we traverse). If you frequently append,
+    // keep a tail reference for O(1) append.
+    public void addToTail(String data) {
+        Node tail = this.head;
+        if (tail == null) {
+            // empty list -> new node becomes head
+            this.head = new Node(data);
+        } else {
+            while (tail.getNextNode() != null) {
+                tail = tail.getNextNode(); // walk to last
+            }
+            tail.setNextNode(new Node(data)); // append new node
+        }
+    }
+
+    // remove and return head data (O(1))
+    public String removeHead() {
+        Node removedHead = this.head;
+        if (removedHead == null) {
+            return null; // nothing to remove
+        }
+        this.head = removedHead.getNextNode(); // drop reference to old head
+        return removedHead.data; // return payload
+    }
+}
+</code></pre>
+        </div>
+        <aside class="notes">Explain addToHead vs addToTail complexity and tail optimization</aside>
+      </section>
+
+      <section>
+
+        <h2>Linked List — Explanation</h2>
+        <ul>
+          <li>head: reference to first node; null when empty</li>
+          <li>addToHead: constant time, just rearrange head and next pointer</li>
+          <li>addToTail: linear time because you traverse to the end</li>
+          <li>removeHead: constant time — return and reassign head</li>
+          <li>Potential improvements: maintain tail reference to get O(1) tail inserts</li>
+        </ul>
+      </section>
+
+      <section>
+
+        <h2>Queue (custom) — Concept</h2>
+        <p>Queue is FIFO. The repo provides a Queue class backed by the LinkedList above. It tracks size and optionally max size.</p>
+      </section>
+
+      <section>
+
+        <h2>Queue — Code (repo)</h2>
+        <div class="code-pane">
+<pre><code class="language-java">// from RevisionLabTest/Queue.java (annotated)
+public class Queue {
+    // underlying linked list and counters
+    public LinkedList queue;
+    public int size;         // current size
+    public int maxSize;      // optional capacity
+
+    public Queue() { this(DEFAULT_MAX_SIZE); }
+
+    public Queue(int maxSize) {
+        this.queue = new LinkedList();
+        this.size = 0;
+        this.maxSize = maxSize;
+    }
+
+    public boolean isEmpty() {
+        return this.size == 0;
+    }
+
+    // enqueue uses addToTail (O(n) here). To make enqueue O(1), add a tail pointer
+    public void enqueue(String data) {
+        this.queue.addToTail(data);
+        this.size++;
+        System.out.println("Added " + data + "! Queue size is now " + this.size);
+    }
+
+    // dequeue removes head (O(1)). Use an exception type for normal runtime error cases.
+    public String dequeue() {
+        if (!this.isEmpty()) {
+            String data = this.queue.removeHead();
+            this.size--;
+            System.out.println("Removed " + data + "! Queue size is now " + this.size);
+            return data;
+        } else {
+            // Prefer throwing java.util.NoSuchElementException for empty queue
+            throw new java.util.NoSuchElementException("Queue is empty!");
+        }
+    }
+
+    public String peek() {
+        if (this.isEmpty()) return null;
+        // avoid exposing internals; create a safe getter in LinkedList when possible
+        return this.queue.head.data;
+    }
+}
+</code></pre>
+        </div>
+      </section>
+
+      <section>
+
+        <h2>Queue — Explanation & Improvements</h2>
+        <ul>
+          <li>enqueue/dequeue are O(1) if addToTail is O(1) (here it is O(n) because linked list traversal); prefer keeping tail pointer.</li>
+          <li>Avoid throwing Error for normal runtime conditions — use exceptions like NoSuchElementException or custom checked exceptions.</li>
+          <li>Encapsulation: expose only safe operations; avoid accessing queue.head.data directly from outside.</li>
+        </ul>
+      </section>
+
+      <section>
+
+        <h2>Binary Search Tree (BST) — Concept</h2>
+        <p>BST organizes nodes so left &lt; node &lt; right. Lookups/insert/delete average O(log n) if balanced.</p>
+      </section>
+
+      <section>
+
+        <h2>BST — Code (repo)</h2>
+        <div class="code-pane">
+<pre><code class="language-java">// from Lab16/BST.java (annotated)
+public class BST {
+    public Node root; // root node of the tree
+
+    public BST() {
+        root = null; // empty tree
+    }
+
+    public void add(int value) {
+        root = add(root, value); // recursive insertion returns subtree root
+    }
+
+    private Node add(Node root, int value) {
+        if (root == null)
+            root = new Node(value); // create node when we reach insertion point
+
+        else if (root.getData() < value)
+            root.rightChild = add(root.rightChild, value); // go right for larger values
+
+        else if (root.getData() > value)
+            root.leftChild = add(root.leftChild, value); // go left for smaller values
+
+        // duplicates are ignored (no equal branch) — decide a policy if duplicates should be stored
+        return root; // return subtree root so callers can attach it
+    }
+}
+</code></pre>
+        </div>
+      </section>
+
+      <section>
+
+        <h2>BST — Explanation</h2>
+        <ul>
+          <li>Recursive add returns the subtree root so parent's child references are set properly.</li>
+          <li>Doesn't handle duplicate values explicitly — duplicates are ignored here (no equal branch).</li>
+          <li>Consider balancing (AVL, Red-Black) for guaranteed O(log n).</li>
+        </ul>
+      </section>
+
+      <section>
+
+        <h2>RandomSumPairs — Utility Example</h2>
+        <div class="code-pane">
+<pre><code class="language-java">// from Assignment2/RandomSumPairs.java (annotated)
+public static Queue<Integer> randomInteger(int n) {
+    Queue<Integer> queue = new LinkedList<>();
+    for (int i = 0; i &lt; n; i++) {
+        // generate random integer in [1,10]
+        int random = (int) (Math.random() * 10) + 1; // Math.random() -> [0,1)
+        queue.offer(random);
+    }
+    return queue;
+}
+
+public static void sumPairs(Queue<Integer> queue) {
+    // This method takes pairs of integers from the queue and pushes their sums.
+    // It uses a stack temporarily to reverse order; consider simpler approaches if order doesn't matter.
+    Stack<Integer> stack = new Stack<>();
+    while (!queue.isEmpty()) {
+        if (queue.size() >= 2) {
+            int num1 = queue.poll();
+            int num2 = queue.poll();
+            int sum = num1 + num2;
+            stack.push(sum);
+        } else {
+            // leftover single element gets preserved
+            stack.push(queue.poll());
+        }
+    }
+    // push back to queue so results are available for caller
+    while (!stack.isEmpty()) queue.offer(stack.pop());
+}
+
+// NOTE: Avoid System.console() for input in IDEs; prefer java.util.Scanner(System.in) for portability.
+</code></pre>
+        </div>
+        <p class="small">Note: prefer Scanner for console input in IDEs; System.console() can be null.</p>
+      </section>
+
+      <section>
+
+        <h2>Employee Class — Style notes & bugs</h2>
+        <div class="code-pane">
+<pre><code class="language-java">// from Lab00/Employee.java (excerpt)
+public class Employee {
+    // Fields use upper-case in repo; prefer lowerCamelCase: id, name, position, salary
+    private int ID;
+    private String Name;
+    private String Position;
+    private double Salary;
+
+    public int getID() { return ID; }
+    // This method should be named getName() to follow JavaBean convention
+    public String Name() { return Name; }
+
+    // display prints internal state; consider overriding toString() for easier logging
+    public void display() {
+        System.out.println("Name: " + Name + "\nID: " + ID + "\nPosition: " + Position + "\nSalary: " + Salary);
+    }
+}
+</code></pre>
+        </div>
+        <ul>
+          <li>Prefer Java naming conventions: fields and methods should be lowerCamelCase (id, name, position).</li>
+          <li>Getter for name should be getName(); inconsistent naming causes frameworks and tests to fail.</li>
+        </ul>
+      </section>
+
+      <section>
+
+        <h2>Practical Tips & Commands</h2>
+        <pre><code class="language-bash"># Compile all .java files
+javac -d out $(find . -name "*.java")
+# Run a single class
+java -cp out RevisionLabTest.LinkedList
+# Use Scanner instead of System.console() when running in IDE
+</code></pre>
+      </section>
+
+      <section>
+
+        <h2>Study Checklist</h2>
+        <ol>
+          <li>Trace addToHead/addToTail by hand on small list</li>
+          <li>Identify complexity of each operation</li>
+          <li>Refactor Queue to maintain a tail pointer and use exceptions</li>
+          <li>Replace System.console() with Scanner for robustness</li>
+        </ol>
+      </section>
+
+      <section>
+
+        <h2>References & Next Steps</h2>
+        <ul>
+          <li>Implement tail pointer for O(1) addToTail</li>
+          <li>Write unit tests (JUnit) for each class</li>
+          <li>Explore tree balancing algorithms</li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="signature">by @iMythms — Mytham Jasim</div>
+
+  <script src="https://unpkg.com/reveal.js@4.5.0/dist/reveal.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      plugins: []
+    });
+    document.querySelectorAll('pre code').forEach((el) => { hljs.highlightElement(el); });
+  </script>
+</body>
+</html>
