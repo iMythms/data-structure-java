@@ -1,50 +1,61 @@
 # Data Structure Java Course
 
-This repository contains Java programs and exercises from a college Data Structures course. Each Lab folder represents a lesson or assignment covering topics such as arrays, linked lists, stacks, queues, sorting algorithms, and binary search trees.
+Comprehensive collection of Java exercises and small projects used for a college-level Data Structures course. The repository contains handwritten implementations and examples intended for learning, teaching, and quick experimentation.
 
-## What's new
+Live slides: https://imythms.github.io/data-structure-java/
 
-- Added `index.html` — a self-contained Reveal.js slide deck that turns this repository's examples into teaching material. Open `index.html` in a browser (recommend using a local static server such as VSCode Live Server or `python -m http.server`) to view the slides.
-- Slides include annotated code excerpts for LinkedList, Queue, BST, RandomSumPairs, and Employee classes. The slide author signature appears at the bottom-right and the first slide notes the author.
+## Contents
 
-## Table of Contents
+- Lab00..Lab16 — course labs covering basic classes, arrays, lists, stacks, queues, trees, and more.
+- Assignment2 — RandomSumPairs example using Java Collections.
+- RevisionLabTest — manual implementations: LinkedList, DoublyLinkedList, Queue, Node, etc.
+- RevesionMajorTest — sorting and search algorithms (bubble, insertion, selection, binary search).
+- index.html — Reveal.js slide deck (annotated code excerpts and explanations). Open with a local static server or use the deployed link above.
 
-- [Lab00 – Basic Classes](Lab00/README.md)
-- [Lab01 – Arrays](Lab01/README.md)
-- [Lab03 – Simple Example](Lab03/README.md)
-- [Lab04 – Exercises](Lab04/README.md)
-- [Lab05 – Exercise 1](Lab05/README.md)
-- [Lab06 – Exercise 1](Lab06/README.md)
-- [Lab07 – Exercise 1](Lab07/README.md)
-- [Lab08 – ArrayList Examples](Lab08/README.md)
-- [Lab09 – ArrayList Example](Lab09/README.md)
-- [Lab10 – Exercise 6](Lab10/README.md)
-- [Lab11 – Linked List Example](Lab11/README.md)
-- [Lab12 – Linked List Iterator Examples](Lab12/README.md)
-- [Lab13 – Stack Examples](Lab13/README.md)
-- [Lab14 – Stack Examples](Lab14/README.md)
-- [Lab15 – Queue Example](Lab15/README.md)
-- [Lab16 – Binary Search Tree](Lab16/README.md)
-- [Assignment2 – Random Sum Pairs](Assignment2/README.md)
-- [RevisionLabTest – Data Structure Implementations](RevisionLabTest/README.md)
-- [RevesionMajorTest – Sorting Algorithms](RevesionMajorTest/README.md)
+## How to build & run examples
 
-## Running the examples
+All code is plain Java (no external dependencies). From the repository root:
 
-All source files are plain Java programs with a `public static void main(String[] args)` entry point. To compile and run an example:
+1) Compile all Java sources into an output directory:
 
 ```bash
-# From the repository root (or the specific lab folder)
 javac -d out $(find . -name "*.java")
+```
+
+2) Run a single example (replace with desired fully-qualified class name):
+
+```bash
 java -cp out RevisionLabTest.LinkedList
 ```
 
-To quickly view the slides locally:
+3) Or compile and run a single file in its folder:
 
 ```bash
-# using Python's simple HTTP server (serves current directory on port 8000)
-python -m http.server 8000
-# then open http://localhost:8000/index.html in your browser
+cd Lab01
+javac Exercise0.java && java Exercise0
 ```
 
-No external libraries are required to compile the Java examples.
+## View the slides locally
+
+Serve the repo directory with a local static file server and open `index.html`:
+
+```bash
+python -m http.server 8000
+# then open http://localhost:8000/index.html
+```
+
+Or use VSCode Live Server or similar.
+
+## Notes & recommendations
+
+- Prefer java.util.Scanner(System.in) for console input in IDEs; System.console() may be null.
+- Some custom classes expose fields directly (e.g., LinkedList.head). Treat these as learning samples and prefer encapsulation in production code.
+- Consider adding unit tests (JUnit) and a build workflow (Maven/Gradle) if you plan to extend this repository.
+
+## Contributing
+
+Small fixes and documentation improvements are welcome. Fork, make changes, and open a pull request.
+
+## License & contact
+
+This repository is personal course material. For questions or suggestions contact: hello@mytham.me
